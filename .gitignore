@@ -1,33 +1,55 @@
-HELP.md
+# ===== Maven =====
 target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# ===== Spring Boot =====
+src/main/resources/application.yml
+src/main/resources/application.properties
+src/main/resources/application-*.yml
+src/main/resources/application-*.properties
 
-### IntelliJ IDEA ###
-.idea
-*.iws
+# ===== IntelliJ IDEA =====
+.idea/
 *.iml
+*.iws
 *.ipr
+out/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/shelf
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
+# ===== VS Code =====
 .vscode/
+*.code-workspace
+
+# ===== Logs =====
+*.log
+logs/
+log/
+
+# ===== Sistema operativo =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Variables de entorno =====
+.env
+.env.local
+.env.production
+
+# ===== Node (si tienes frontend) =====
+node_modules/
+dist/
+.npm
+
+# ===== Archivos temporales =====
+*.tmp
+*.swp
+*.bak
