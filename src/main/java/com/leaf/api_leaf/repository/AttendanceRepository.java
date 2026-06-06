@@ -3,7 +3,6 @@ package com.leaf.api_leaf.repository;
 import com.leaf.api_leaf.model.AttendanceRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;

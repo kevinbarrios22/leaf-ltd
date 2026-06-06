@@ -36,3 +36,6 @@ springdoc:
     operations-sorter: alpha
     display-request-duration: true
     try-it-out-enabled: true
+
+cors:
+  allowed-origins: http://localhost:5173
