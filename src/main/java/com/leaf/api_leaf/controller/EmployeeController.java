@@ -1,7 +1,10 @@
 package com.leaf.api_leaf.controller;
 
-import com.leaf.api_leaf.model.Employee;
+import com.leaf.api_leaf.dto.EmployeeDTO;
+import com.leaf.api_leaf.dto.response.EmployeeResponse;
 import com.leaf.api_leaf.service.EmployeeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +12,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Tag(name = "Empleados", description = "CRUD de empleados")
 @RestController
 @RequestMapping("/api/employees")
 @RequiredArgsConstructor
@@ -17,37 +22,37 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
-    // Crear empleado — solo BOSS
+    @Operation(summary = "Crear empleado")
     @PostMapping
     @PreAuthorize("hasRole('BOSS')")
-    public ResponseEntity<Employee> create(@Valid @RequestBodyEmployeeDTO dto) {
-        return ResponseEntity.ok(employeeService.create(dto));
+    public ResponseEntity<EmployeeResponse> create(@Valid @RequestBody EmployeeDTO dto) {
+        return ResponseEntity.ok(EmployeeResponse.from(employeeService.create(dto)));
     }
 
-    // Ver todos — BOSS y STORE
+    @Operation(summary = "Listar empleados activos")
     @GetMapping
     @PreAuthorize("hasAnyRole('BOSS','STORE')")
-    public ResponseEntity<List<Employee>> getAll() {
-        return ResponseEntity.ok(employeeService.getAll());
+    public ResponseEntity<List<EmployeeResponse>> getAll() {
+        return ResponseEntity.ok(employeeService.getAll().stream()
+                .map(EmployeeResponse::from).collect(Collectors.toList()));
     }
 
-    // Ver uno por ID
+    @Operation(summary = "Buscar empleado por ID")
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('BOSS','STORE')")
-    public ResponseEntity<Employee> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(employeeService.getById(id));
+    public ResponseEntity<EmployeeResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(EmployeeResponse.from(employeeService.getById(id)));
     }
 
-    // Editar empleado — solo BOSS
+    @Operation(summary = "Actualizar empleado")
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('BOSS')")
-    public ResponseEntity<Employee> update(
-            @PathVariable Long id,
-            @Valid @RequestBody EmployeeDTO dto) {
-        return ResponseEntity.ok(employeeService.update(id, dto));
+    public ResponseEntity<EmployeeResponse> update(
+            @PathVariable Long id, @Valid @RequestBody EmployeeDTO dto) {
+        return ResponseEntity.ok(EmployeeResponse.from(employeeService.update(id, dto)));
     }
 
-    // Desactivar empleado — solo BOSS
+    @Operation(summary = "Desactivar empleado")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('BOSS')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

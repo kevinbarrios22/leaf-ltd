@@ -1,8 +1,10 @@
 package com.leaf.api_leaf.controller;
 
 import com.leaf.api_leaf.dto.DeliverySheetDTO;
-import com.leaf.api_leaf.model.DeliverySheet;
+import com.leaf.api_leaf.dto.response.DeliverySheetResponse;
 import com.leaf.api_leaf.service.DeliveryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Tag(name = "Delivery", description = "Gestión de planillas de entrega")
 @RestController
 @RequestMapping("/api/delivery")
 @RequiredArgsConstructor
@@ -20,37 +24,42 @@ public class DeliveryController {
 
     private final DeliveryService deliveryService;
 
+    @Operation(summary = "Crear planilla de delivery")
     @PostMapping
-    @PreAuthorize("hasAnyRole('BOSS','STORE','OFFICE', 'MANAGER')")
-    public ResponseEntity<DeliverySheet> create(
+    @PreAuthorize("hasAnyRole('BOSS','STORE')")
+    public ResponseEntity<DeliverySheetResponse> create(
             @Valid @RequestBody DeliverySheetDTO dto) {
-        return ResponseEntity.ok(deliveryService.create(dto));
+        return ResponseEntity.ok(DeliverySheetResponse.from(deliveryService.create(dto)));
     }
 
+    @Operation(summary = "Listar planillas — filtrar por fecha opcional")
     @GetMapping
-    @PreAuthorize("hasAnyRole('BOSS','STORE','OFFICE', 'MANAGER')")
-    public ResponseEntity<List<DeliverySheet>> getAll(
+    @PreAuthorize("hasAnyRole('BOSS','STORE')")
+    public ResponseEntity<List<DeliverySheetResponse>> getAll(
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        return ResponseEntity.ok(deliveryService.getAll(date));
+        return ResponseEntity.ok(deliveryService.getAll(date).stream()
+                .map(DeliverySheetResponse::from).collect(Collectors.toList()));
     }
 
+    @Operation(summary = "Ver planilla por ID")
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('BOSS','STORE','OFFICE', 'MANAGER')")
-    public ResponseEntity<DeliverySheet> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(deliveryService.getById(id));
+    @PreAuthorize("hasAnyRole('BOSS','STORE')")
+    public ResponseEntity<DeliverySheetResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(DeliverySheetResponse.from(deliveryService.getById(id)));
     }
 
+    @Operation(summary = "Actualizar planilla")
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('BOSS','STORE','OFFICE', 'MANAGER')")
-    public ResponseEntity<DeliverySheet> update(
-            @PathVariable Long id,
-            @Valid @RequestBody DeliverySheetDTO dto) {
-        return ResponseEntity.ok(deliveryService.update(id, dto));
+    @PreAuthorize("hasAnyRole('BOSS','STORE')")
+    public ResponseEntity<DeliverySheetResponse> update(
+            @PathVariable Long id, @Valid @RequestBody DeliverySheetDTO dto) {
+        return ResponseEntity.ok(DeliverySheetResponse.from(deliveryService.update(id, dto)));
     }
 
+    @Operation(summary = "Eliminar planilla — solo BOSS")
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('JEFE')")
+    @PreAuthorize("hasRole('BOSS')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         deliveryService.delete(id);
         return ResponseEntity.noContent().build();

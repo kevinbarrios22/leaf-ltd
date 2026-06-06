@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/leafltd
-    username: postgres
-    password: 147258
+    url: jdbc:postgresql://localhost:5432/TU_BASE_DE_DATOS
+    username: TU_USUARIO
+    password: TU_PASSWORD
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -14,25 +14,16 @@ spring:
       hibernate:
         globally_quoted_identifiers: true
         format_sql: true
-        use_sql_comments: true
-
-  security:
-    user:
-      name: ignored
 
 server:
   port: 8080
 
 jwt:
-  secret: clave_secreta_muy_larga_minimo_32_caracteres_aqui
+  secret: TU_CLAVE_SECRETA_MINIMO_32_CARACTERES
 
-# Swagger / OpenAPI
 springdoc:
   api-docs:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
-    tags-sorter: alpha
-    operations-sorter: alpha
-    display-request-duration: true
     try-it-out-enabled: true

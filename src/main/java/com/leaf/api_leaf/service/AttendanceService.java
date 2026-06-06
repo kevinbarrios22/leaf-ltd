@@ -1,6 +1,5 @@
 package com.leaf.api_leaf.service;
 
-import com.leaf.api_leaf.dto.AttendanceRequest;
 import com.leaf.api_leaf.enums.AttendanceStatus;
 import com.leaf.api_leaf.model.AttendanceRecord;
 import com.leaf.api_leaf.model.Employee;
@@ -20,7 +19,7 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final EmployeeRepository employeeRepository;
 
-    public AttendanceRecord registerCheckIn(AttendanceRequest request) {
+    public AttendanceRecord registerCheckIn(@org.checkerframework.checker.nullness.qual.MonotonicNonNull Long request) {
         Employee employee = employeeRepository.findById(request.getEmployeeId())
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
 
@@ -49,7 +48,7 @@ public class AttendanceService {
         return attendanceRepository.save(record);
     }
 
-    public AttendanceRecord registerCheckOut(AttendanceRequest request) {
+    public AttendanceRecord registerCheckOut(@org.checkerframework.checker.nullness.qual.MonotonicNonNull Long request) {
         AttendanceRecord record = attendanceRepository
                 .findByEmployeeIdAndDate(request.getEmployeeId(), LocalDate.now())
                 .orElseThrow(() -> new RuntimeException("No existe registro de entrada para hoy"));

@@ -1,9 +1,9 @@
 package com.leaf.api_leaf.controller;
 
-import com.leaf.api_leaf.dto.AttendanceRequest;
-import com.leaf.api_leaf.model.AttendanceRecord;
+import com.leaf.api_leaf.dto.response.AttendanceResponse;
 import com.leaf.api_leaf.service.AttendanceService;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Tag(name = "Asistencia", description = "Control de horarios y marcaciones")
 @RestController
 @RequestMapping("/api/attendance")
 @RequiredArgsConstructor
@@ -20,34 +22,36 @@ public class AttendanceController {
 
     private final AttendanceService attendanceService;
 
-    // Cualquier usuario autenticado puede marcar entrada
-    @PostMapping("/check-in")
-    public ResponseEntity<AttendanceRecord> checkIn(
-            @Valid @RequestBody AttendanceRequest request) {
-        return ResponseEntity.ok(attendanceService.registerCheckIn(request));
+    @Operation(summary = "Marcar entrada del empleado")
+    @PostMapping("/check-in/{employeeId}")
+    public ResponseEntity<AttendanceResponse> checkIn(@PathVariable Long employeeId) {
+        return ResponseEntity.ok(
+                AttendanceResponse.from(attendanceService.registerCheckIn(employeeId)));
     }
 
-    // Cualquier usuario autenticado puede marcar salida
-    @PostMapping("/check-out")
-    public ResponseEntity<AttendanceRecord> checkOut(
-            @Valid @RequestBody AttendanceRequest request) {
-        return ResponseEntity.ok(attendanceService.registerCheckOut(request));
+    @Operation(summary = "Marcar salida del empleado")
+    @PostMapping("/check-out/{employeeId}")
+    public ResponseEntity<AttendanceResponse> checkOut(@PathVariable Long employeeId) {
+        return ResponseEntity.ok(
+                AttendanceResponse.from(attendanceService.registerCheckOut(employeeId)));
     }
 
-    // Solo JEFE y OFICINA pueden ver la asistencia de todos
+    @Operation(summary = "Ver asistencia por rango de fechas")
     @GetMapping("/all")
-    @PreAuthorize("hasAnyRole('JEFE','OFICINA')")
-    public ResponseEntity<List<AttendanceRecord>> getAll(
+    @PreAuthorize("hasAnyRole('BOSS','STORE')")
+    public ResponseEntity<List<AttendanceResponse>> getAll(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-        return ResponseEntity.ok(attendanceService.getAllBetween(from, to));
+        return ResponseEntity.ok(attendanceService.getAllBetween(from, to).stream()
+                .map(AttendanceResponse::from).collect(Collectors.toList()));
     }
 
-    // Ver asistencia por empleado
+    @Operation(summary = "Ver asistencia de un empleado")
     @GetMapping("/employee/{employeeId}")
-    @PreAuthorize("hasAnyRole('JEFE','OFICINA')")
-    public ResponseEntity<List<AttendanceRecord>> getByEmployee(
+    @PreAuthorize("hasAnyRole('BOSS','STORE')")
+    public ResponseEntity<List<AttendanceResponse>> getByEmployee(
             @PathVariable Long employeeId) {
-        return ResponseEntity.ok(attendanceService.getByEmployeeId(employeeId));
+        return ResponseEntity.ok(attendanceService.getByEmployeeId(employeeId).stream()
+                .map(AttendanceResponse::from).collect(Collectors.toList()));
     }
 }
