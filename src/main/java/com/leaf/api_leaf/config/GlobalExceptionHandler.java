@@ -29,21 +29,21 @@ public class GlobalExceptionHandler {
             errors.put(field, message);
         });
 
-        return buildResponse(HttpStatus.BAD_REQUEST, "Error de validación", errors);
+        return buildResponse(HttpStatus.BAD_REQUEST, "Validation error", errors);
     }
 
     // Credenciales incorrectas
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Map<String, Object>> handleBadCredentials(
             BadCredentialsException ex) {
-        return buildResponse(HttpStatus.UNAUTHORIZED, "Usuario o contraseña incorrectos", null);
+        return buildResponse(HttpStatus.UNAUTHORIZED, "Incorrect username or password ", null);
     }
 
     // Acceso denegado por rol
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Map<String, Object>> handleAccessDenied(
             AccessDeniedException ex) {
-        return buildResponse(HttpStatus.FORBIDDEN, "No tienes permisos para realizar esta acción", null);
+        return buildResponse(HttpStatus.FORBIDDEN, "You don't have permission to perform this action.", null);
     }
 
     // Entidad no encontrada
@@ -65,7 +65,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleGenericException(
             Exception ex) {
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR,
-                "Error interno del servidor", null);
+                "Internal server error", null);
     }
 
     private ResponseEntity<Map<String, Object>> buildResponse(

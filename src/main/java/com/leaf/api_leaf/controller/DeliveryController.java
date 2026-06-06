@@ -26,7 +26,7 @@ public class DeliveryController {
 
     @Operation(summary = "Create  delivery sheet ")
     @PostMapping
-    @PreAuthorize("hasAnyRole('BOSS','EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('BOSS','MANAGER', 'EMPLOYEE')")
     public ResponseEntity<DeliverySheetResponse> create(
             @Valid @RequestBody DeliverySheetDTO dto) {
         return ResponseEntity.ok(DeliverySheetResponse.from(deliveryService.create(dto)));
@@ -34,7 +34,7 @@ public class DeliveryController {
 
     @Operation(summary = "List delivery sheets ", description = "Optionally filter by date")
     @GetMapping
-    @PreAuthorize("hasAnyRole('BOSS','EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('BOSS','OFFICE','MANAGER','EMPLOYEE')")
     public ResponseEntity<List<DeliverySheetResponse>> getAll(
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -44,14 +44,14 @@ public class DeliveryController {
 
     @Operation(summary = "Get delivery sheet by ID")
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('BOSS','EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('BOSS','OFFICE','MANAGER')")
     public ResponseEntity<DeliverySheetResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(DeliverySheetResponse.from(deliveryService.getById(id)));
     }
 
     @Operation(summary = "Update delivery sheet ")
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('BOSS','EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('BOSS','MANAGER')")
     public ResponseEntity<DeliverySheetResponse> update(
             @PathVariable Long id, @Valid @RequestBody DeliverySheetDTO dto) {
         return ResponseEntity.ok(DeliverySheetResponse.from(deliveryService.update(id, dto)));

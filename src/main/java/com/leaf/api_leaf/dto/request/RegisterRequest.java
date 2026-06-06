@@ -10,15 +10,15 @@ import lombok.Setter;
 @Setter
 public class RegisterRequest {
 
-    @NotBlank(message = "El usuario es obligatorio")
+    @NotBlank(message = "The user is required")
     private String username;
 
-    @NotBlank(message = "La contraseña es obligatoria")
+    @NotBlank(message = "The password is required")
     private String password;
 
-    @NotBlank(message = "El nombre completo es obligatorio")
+    @NotBlank(message = "The full name is required")
     private String fullName;
 
-    @NotNull(message = "El rol es obligatorio")  
+    @NotNull(message = "The rol is required")
     private RoleName role;
 }

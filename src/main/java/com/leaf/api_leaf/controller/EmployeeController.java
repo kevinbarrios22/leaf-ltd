@@ -24,7 +24,7 @@ public class EmployeeController {
 
     @Operation(summary = "Create employee")
     @PostMapping
-    @PreAuthorize("hasRole('BOSS')")
+    @PreAuthorize("hasAnyRole('BOSS','OFFICE','MANAGER')")
     public ResponseEntity<EmployeeResponse> create(@Valid @RequestBody EmployeeDTO dto) {
         return ResponseEntity.ok(EmployeeResponse.from(employeeService.create(dto)));
     }
@@ -39,20 +39,20 @@ public class EmployeeController {
 
     @Operation(summary = "Get employee by ID")
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('BOSS','OFFCIE','MANAGER')")
+    @PreAuthorize("hasAnyRole('BOSS','OFFICE','MANAGER')")
     public ResponseEntity<EmployeeResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(EmployeeResponse.from(employeeService.getById(id)));
     }
 
     @Operation(summary = "Update employee")
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('BOSS')")
+    @PreAuthorize("hasAnyRole('BOSS','OFFICE','MANAGER')")
     public ResponseEntity<EmployeeResponse> update(
             @PathVariable Long id, @Valid @RequestBody EmployeeDTO dto) {
         return ResponseEntity.ok(EmployeeResponse.from(employeeService.update(id, dto)));
     }
 
-    @Operation(summary = "Desactive employee")
+    @Operation(summary = "Deactivate employee")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('BOSS')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

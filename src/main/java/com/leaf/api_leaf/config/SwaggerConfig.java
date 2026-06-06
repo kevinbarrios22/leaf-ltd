@@ -32,9 +32,9 @@ public class SwaggerConfig {
                     | Role | Access |
                     |------|--------|
                     | BOSS | Full access to all modules |
-                    | STORE | Attendance and delivery sheets |
-                    | WAREHOUSE | Attendance and damaged products |
-                    | EMPLOYEE | Own attendance only |
+                    | OFFICE | Full access to all modules but cannot delete |
+                    | MANAGER | Full access to all modules but cannot delete  |
+                    | EMPLOYEE | Put in damaged product list  |
                     """)
                         .contact(new Contact()
                                 .name("Leaf Ltd")

@@ -9,7 +9,7 @@ import java.time.LocalTime;
 @Data
 public class AttendanceRequest {
 
-    @NotNull(message = "El ID del empleado es obligatorio")
+    @NotNull(message = "The employee ID is required")
     private Long employeeId;
 
     private LocalTime scheduledStart;

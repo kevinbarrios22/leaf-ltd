@@ -29,7 +29,7 @@ public class AttendanceController {
                 AttendanceResponse.from(attendanceService.registerCheckIn(employeeId)));
     }
 
-    @Operation(summary = "Register chek-out", description = "Records employee departure time")
+    @Operation(summary = "Register check-out", description = "Records employee departure time")
     @PostMapping("/check-out/{employeeId}")
     public ResponseEntity<AttendanceResponse> checkOut(@PathVariable Long employeeId) {
         return ResponseEntity.ok(
@@ -38,7 +38,7 @@ public class AttendanceController {
 
     @Operation(summary = "Get attendance by date range", description = "Filter attendance records between two dates")
     @GetMapping("/all")
-    @PreAuthorize("hasAnyRole('BOSS','EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('BOSS','OFFICE')")
     public ResponseEntity<List<AttendanceResponse>> getAll(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
@@ -48,7 +48,7 @@ public class AttendanceController {
 
     @Operation(summary = "Get attendance by employee")
     @GetMapping("/employee/{employeeId}")
-    @PreAuthorize("hasAnyRole('BOSS','EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('BOSS','OFFICE')")
     public ResponseEntity<List<AttendanceResponse>> getByEmployee(
             @PathVariable Long employeeId) {
         return ResponseEntity.ok(attendanceService.getByEmployeeId(employeeId).stream()

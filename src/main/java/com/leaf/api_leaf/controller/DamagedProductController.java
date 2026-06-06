@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Tag(name = "Warehouse", description = "Damaget products registry")
+@Tag(name = "STORE", description = "Damaged products registry")
 @RestController
 @RequestMapping("/api/damaged")
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class DamagedProductController {
 
     private final DamagedProductService damagedProductService;
 
-    @Operation(summary = "Register damaged prodcut ")
+    @Operation(summary = "Register damaged product ")
     @PostMapping
     @PreAuthorize("hasAnyRole('BOSS','OFFICE','MANAGER','EMPLOYEE')")
     public ResponseEntity<DamagedProductResponse> create(
@@ -61,4 +61,4 @@ public class DamagedProductController {
         damagedProductService.delete(id);
         return ResponseEntity.noContent().build();
     }
-}  
+}

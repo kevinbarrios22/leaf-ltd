@@ -7,12 +7,12 @@ import lombok.Data;
 @Data
 public class DeliveryInvoiceDTO {
 
-    @NotBlank(message = "El nombre del cliente es obligatorio")
+    @NotBlank(message = "The customer name is required")
     private String customerName;
 
-    @NotBlank(message = "El numero  de invoice es obligatorio")
-    private String invoiceNumber;
 
+    private String invoiceNumber;
+    @NotBlank(message = "The quantity of invoices is Required")
     private Integer invoiceCount;
 
 }

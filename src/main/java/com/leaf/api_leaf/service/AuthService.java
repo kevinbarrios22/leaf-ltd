@@ -42,18 +42,18 @@ public class AuthService {
         String role = user.getRoles().stream()
                 .findFirst()
                 .map(r -> r.getName().name())
-                .orElse("EMPLEADO");
+                .orElse("EMPLOYEE");
 
         return new AuthResponse(token, user.getUsername(), role);
     }
 
     public String register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("El usuario ya existe");
+            throw new RuntimeException("The employee already exists");
         }
 
         Role role = roleRepository.findByName(request.getRole())
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Role not found"));
 
         AppUser user = new AppUser();
         user.setUsername(request.getUsername());
@@ -62,6 +62,6 @@ public class AuthService {
         user.getRoles().add(role);
 
         userRepository.save(user);
-        return "Usuario registrado exitosamente";
+        return "succesfully registered user";
     }
 }

@@ -20,7 +20,7 @@ public class DamagedProductService {
 
     public DamagedProduct create(DamagedProductDTO dto, String username) {
         AppUser user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         DamagedProduct product = new DamagedProduct();
         product.setReportDate(dto.getReportDate());
@@ -44,7 +44,7 @@ public class DamagedProductService {
 
     public DamagedProduct getById(Long id) {
         return damagedProductRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Registro no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Record not found"));
     }
 
     public void delete(Long id) {

@@ -1,7 +1,8 @@
 package com.leaf.api_leaf.controller;
 
 import com.leaf.api_leaf.dto.response.UserResponse;
-import com.leaf.api_leaf.repository.UserRepository;
+
+import com.leaf.api_leaf.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +19,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    @Operation(summary = "List all users ", description = "Only BOSS can access this endpoint  ")
+    @Operation(summary = "List all users ", description = "Only BOSS and OFFICE can access this endpoint  ")
     @GetMapping
-    @PreAuthorize("hasRole('BOSS')")
+    @PreAuthorize("hasAnyRole('BOSS','OFFICE')")
     public ResponseEntity<List<UserResponse>> getAll() {
-        return ResponseEntity.ok(userRepository.findAll().stream()
+        return ResponseEntity.ok(userService.getAll().stream()
                 .map(UserResponse::from).collect(Collectors.toList()));
     }
 }

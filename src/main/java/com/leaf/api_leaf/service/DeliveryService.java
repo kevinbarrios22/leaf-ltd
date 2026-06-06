@@ -47,7 +47,7 @@ public class DeliveryService {
 
     public DeliverySheet getById(Long id) {
         return deliverySheetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Planilla no encontrada"));
+                .orElseThrow(() -> new RuntimeException("List not found"));
     }
 
     public DeliverySheet update(Long id, DeliverySheetDTO dto) {

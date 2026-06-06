@@ -12,14 +12,14 @@ import java.time.LocalDate;
 public class DamagedProductDTO {
 
 
-    @NotNull(message = "La fecha es obligatoria")
+    @NotNull(message = "The date is required")
     private LocalDate reportDate;
 
-    @NotBlank(message = "El número de ítem es obligatorio")
+    @NotBlank(message = "The item code is required")
     private String itemNumber;
 
-    @NotNull(message = "La cantidad es obligatoria")
-    @Min(value = 1, message = "La cantidad debe ser al menos 1 ")
+    @NotNull(message = "The quantity is required")
+    @Min(value = 1, message = "The quantity must be at least 1 ")
     private Integer quantity;
 
     private String description;

@@ -9,14 +9,14 @@ import lombok.Setter;
 @Setter
 public class EmployeeDTO {
 
-    @NotBlank(message = "El nombre es obligatorio")
+    @NotBlank(message = "The name is required")
     private String fullName;
 
-    @NotBlank(message = "El email es obligatorio")
-    @Email(message = "Email inválido")
+    @NotBlank(message = "The email is required")
+    @Email(message = "Invalid email")
     private String email;
 
     private String position;
     private String phone;
-    private Long appUserId; // opcional, para vincular con usuario del sistema
+    private Long appUserId; // Optional, to link with system user
 }

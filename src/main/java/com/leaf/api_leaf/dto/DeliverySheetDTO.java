@@ -10,16 +10,16 @@ import java.util.List;
 @Data
 public class DeliverySheetDTO {
 
-    @NotNull(message = "La fecha es obligatoria")
+    @NotNull(message = "The date is required")
     private LocalDate deliveryDate;
 
-    @NotBlank(message = "El nombre de la tienda es obligatorio")
+    @NotBlank(message = "The store name is required")
     private String storeName;
 
-    @NotBlank(message = "El nombre del repartidor es obligatorio")
+    @NotBlank(message = "The driver name is required")
     private String driverName;
 
-    @NotBlank(message = "La placa es obligatoria")
+    @NotBlank(message = "The plate is required")
     private String vehiclePlate;
 
     private List<DeliveryInvoiceDTO> invoices;

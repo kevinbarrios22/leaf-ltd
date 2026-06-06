@@ -26,9 +26,9 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 
-    @Operation(summary = "Register user", description = "Only BOSS role can register new users")
+    @Operation(summary = "Register user", description = "Only BOSS and OFFICE role can register new users")
     @PostMapping("/register")
-    @PreAuthorize("hasRole('BOSS')")
+    @PreAuthorize("hasAnyRole('BOSS','OFFICE')")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }

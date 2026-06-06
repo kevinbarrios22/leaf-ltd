@@ -21,11 +21,11 @@ public class AttendanceService {
 
     public AttendanceRecord registerCheckIn(Long employeeId) {
         Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
 
         attendanceRepository.findByEmployeeIdAndDate(employee.getId(), LocalDate.now())
                 .ifPresent(r -> {
-                    throw new RuntimeException("Ya registró entrada hoy");
+                    throw new RuntimeException("Already registered today");
                 });
 
         LocalTime now = LocalTime.now();
@@ -49,7 +49,7 @@ public class AttendanceService {
     public AttendanceRecord registerCheckOut(Long employeeId) {
         AttendanceRecord record = attendanceRepository
                 .findByEmployeeIdAndDate(employeeId, LocalDate.now())
-                .orElseThrow(() -> new RuntimeException("No existe registro de entrada para hoy"));
+                .orElseThrow(() -> new RuntimeException("There is no check-in for today "));
 
         LocalTime now = LocalTime.now();
         record.setCheckOut(now);

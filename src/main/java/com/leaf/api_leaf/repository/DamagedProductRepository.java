@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface DamagedProductRepository extends JpaRepository<DamagedProduct, Long> {
     List<DamagedProduct> findByReportDate(LocalDate date);
-    List<DamagedProduct> findByItemNumber(String itenNumber);
+    List<DamagedProduct> findByItemNumber(String itemNumber);
     List<DamagedProduct> findByReportDateBetween(LocalDate from, LocalDate to);
 
 }
