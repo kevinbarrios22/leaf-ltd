@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/leafltd
+    username: postgres
+    password: 147258
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        format_sql: true
+        use_sql_comments: true
+
+  security:
+    user:
+      name: ignored  # desactiva el user generado por defecto de Spring Security
+
+server:
+  port: 8080
+
+jwt:
+  secret: clave_secreta_muy_larga_minimo_32_caracteres_aqui
