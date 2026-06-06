@@ -1,4 +1,4 @@
-package com.leaf.api_leaf.dto;
+package com.leaf.api_leaf.dto.request;
 
 
 import jakarta.validation.constraints.NotNull;

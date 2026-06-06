@@ -1,11 +1,14 @@
 package com.leaf.api_leaf.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 @Entity
 @Table(name = "delivery_invoices")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class DeliveryInvoice {
 
     @Id

@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Tag(name = "Delivery", description = "Gestión de planillas de entrega")
+@Tag(name = "Delivery", description = "Delivery sheet management")
 @RestController
 @RequestMapping("/api/delivery")
 @RequiredArgsConstructor
@@ -24,17 +24,17 @@ public class DeliveryController {
 
     private final DeliveryService deliveryService;
 
-    @Operation(summary = "Crear planilla de delivery")
+    @Operation(summary = "Create  delivery sheet ")
     @PostMapping
-    @PreAuthorize("hasAnyRole('BOSS','STORE')")
+    @PreAuthorize("hasAnyRole('BOSS','EMPLOYEE')")
     public ResponseEntity<DeliverySheetResponse> create(
             @Valid @RequestBody DeliverySheetDTO dto) {
         return ResponseEntity.ok(DeliverySheetResponse.from(deliveryService.create(dto)));
     }
 
-    @Operation(summary = "Listar planillas — filtrar por fecha opcional")
+    @Operation(summary = "List delivery sheets ", description = "Optionally filter by date")
     @GetMapping
-    @PreAuthorize("hasAnyRole('BOSS','STORE')")
+    @PreAuthorize("hasAnyRole('BOSS','EMPLOYEE')")
     public ResponseEntity<List<DeliverySheetResponse>> getAll(
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -42,22 +42,22 @@ public class DeliveryController {
                 .map(DeliverySheetResponse::from).collect(Collectors.toList()));
     }
 
-    @Operation(summary = "Ver planilla por ID")
+    @Operation(summary = "Get delivery sheet by ID")
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('BOSS','STORE')")
+    @PreAuthorize("hasAnyRole('BOSS','EMPLOYEE')")
     public ResponseEntity<DeliverySheetResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(DeliverySheetResponse.from(deliveryService.getById(id)));
     }
 
-    @Operation(summary = "Actualizar planilla")
+    @Operation(summary = "Update delivery sheet ")
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('BOSS','STORE')")
+    @PreAuthorize("hasAnyRole('BOSS','EMPLOYEE')")
     public ResponseEntity<DeliverySheetResponse> update(
             @PathVariable Long id, @Valid @RequestBody DeliverySheetDTO dto) {
         return ResponseEntity.ok(DeliverySheetResponse.from(deliveryService.update(id, dto)));
     }
 
-    @Operation(summary = "Eliminar planilla — solo BOSS")
+    @Operation(summary = "Delete delivery sheet", description = "Only BOSS can delete ")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('BOSS')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

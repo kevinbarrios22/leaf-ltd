@@ -2,13 +2,17 @@ package com.leaf.api_leaf.model;
 
 import com.leaf.api_leaf.enums.AttendanceStatus;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
 @Table(name = "attendance_records")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AttendanceRecord {
 
     @Id

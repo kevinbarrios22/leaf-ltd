@@ -4,5 +4,5 @@ public enum RoleName {
     BOSS,
     OFFICE,
     MANAGER,
-    STORE
+    EMPLOYEE
 }

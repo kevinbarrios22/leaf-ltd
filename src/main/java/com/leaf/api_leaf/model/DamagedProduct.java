@@ -1,12 +1,15 @@
 package com.leaf.api_leaf.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
 @Entity
 @Table(name = "damaged_product")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class DamagedProduct {
 
 

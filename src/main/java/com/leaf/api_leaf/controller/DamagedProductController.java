@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Tag(name = "Bodega", description = "Registro de productos dañados")
+@Tag(name = "Warehouse", description = "Damaget products registry")
 @RestController
 @RequestMapping("/api/damaged")
 @RequiredArgsConstructor
@@ -25,9 +25,9 @@ public class DamagedProductController {
 
     private final DamagedProductService damagedProductService;
 
-    @Operation(summary = "Registrar producto dañado")
+    @Operation(summary = "Register damaged prodcut ")
     @PostMapping
-    @PreAuthorize("hasAnyRole('BOSS','WAREHOUSE')")
+    @PreAuthorize("hasAnyRole('BOSS','OFFICE','MANAGER','EMPLOYEE')")
     public ResponseEntity<DamagedProductResponse> create(
             @Valid @RequestBody DamagedProductDTO dto,
             Authentication authentication) {
@@ -35,9 +35,9 @@ public class DamagedProductController {
                 damagedProductService.create(dto, authentication.getName())));
     }
 
-    @Operation(summary = "Listar productos dañados — filtrar por fecha o ítem")
+    @Operation(summary = "List damaged products ", description = "Optionally filter by date  or item number")
     @GetMapping
-    @PreAuthorize("hasAnyRole('BOSS','WAREHOUSE')")
+    @PreAuthorize("hasAnyRole('BOSS','OFFICE','MANAGER')")
     public ResponseEntity<List<DamagedProductResponse>> getAll(
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
@@ -46,19 +46,19 @@ public class DamagedProductController {
                 .map(DamagedProductResponse::from).collect(Collectors.toList()));
     }
 
-    @Operation(summary = "Ver producto dañado por ID")
+    @Operation(summary = "Get damaged product by ID ")
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('BOSS','WAREHOUSE')")
+    @PreAuthorize("hasAnyRole('BOSS','OFFICE','MANAGER')")
     public ResponseEntity<DamagedProductResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(
                 DamagedProductResponse.from(damagedProductService.getById(id)));
     }
 
-    @Operation(summary = "Eliminar registro — solo BOSS")
+    @Operation(summary = "Delete damaged product record", description = "Only BOSS can delete ")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('BOSS')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         damagedProductService.delete(id);
         return ResponseEntity.noContent().build();
     }
-}
+}  

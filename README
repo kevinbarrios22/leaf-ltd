@@ -3,7 +3,7 @@
 REST API built with Spring Boot 3.3.4 + Java 21 for managing employee attendance, delivery sheets, and warehouse damaged products.
 
 ## 📋 Modules
-- ✅ JWT Authentication with role-based access (BOSS, STORE, WAREHOUSE, EMPLOYEE)
+- ✅ JWT Authentication with role-based access (BOSS, OFFICE, MANAGER, EMPLOYEE)
 - ✅ Employee attendance control (check-in / check-out)
 - ✅ Delivery sheet management
 - ✅ Damaged products registry

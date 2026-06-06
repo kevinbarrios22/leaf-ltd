@@ -19,18 +19,17 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final EmployeeRepository employeeRepository;
 
-    public AttendanceRecord registerCheckIn(@org.checkerframework.checker.nullness.qual.MonotonicNonNull Long request) {
-        Employee employee = employeeRepository.findById(request.getEmployeeId())
+    public AttendanceRecord registerCheckIn(Long employeeId) {
+        Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
 
-        // Verificar si ya marcó entrada hoy
         attendanceRepository.findByEmployeeIdAndDate(employee.getId(), LocalDate.now())
-                .ifPresent(r -> { throw new RuntimeException("Ya registró entrada hoy"); });
+                .ifPresent(r -> {
+                    throw new RuntimeException("Ya registró entrada hoy");
+                });
 
         LocalTime now = LocalTime.now();
-        LocalTime scheduledStart = request.getScheduledStart() != null
-                ? request.getScheduledStart()
-                : LocalTime.of(8, 0); // hora default 8:00am
+        LocalTime scheduledStart = LocalTime.of(8, 0);
 
         AttendanceStatus status = now.isAfter(scheduledStart.plusMinutes(10))
                 ? AttendanceStatus.LATE
@@ -41,22 +40,20 @@ public class AttendanceService {
         record.setDate(LocalDate.now());
         record.setCheckIn(now);
         record.setScheduledStart(scheduledStart);
-        record.setScheduledEnd(request.getScheduledEnd());
+        record.setScheduledEnd(LocalTime.of(17, 0));
         record.setStatus(status);
-        record.setNotes(request.getNotes());
 
         return attendanceRepository.save(record);
     }
 
-    public AttendanceRecord registerCheckOut(@org.checkerframework.checker.nullness.qual.MonotonicNonNull Long request) {
+    public AttendanceRecord registerCheckOut(Long employeeId) {
         AttendanceRecord record = attendanceRepository
-                .findByEmployeeIdAndDate(request.getEmployeeId(), LocalDate.now())
+                .findByEmployeeIdAndDate(employeeId, LocalDate.now())
                 .orElseThrow(() -> new RuntimeException("No existe registro de entrada para hoy"));
 
         LocalTime now = LocalTime.now();
         record.setCheckOut(now);
 
-        // Detectar salida anticipada
         if (record.getScheduledEnd() != null && now.isBefore(record.getScheduledEnd())) {
             record.setStatus(AttendanceStatus.EARLY_LEAVE);
         }

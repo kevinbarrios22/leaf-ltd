@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Tag(name = "Asistencia", description = "Control de horarios y marcaciones")
+@Tag(name = "Attendance", description = "Employee attendance and schedule control")
 @RestController
 @RequestMapping("/api/attendance")
 @RequiredArgsConstructor
@@ -22,23 +22,23 @@ public class AttendanceController {
 
     private final AttendanceService attendanceService;
 
-    @Operation(summary = "Marcar entrada del empleado")
+    @Operation(summary = "Register check-in", description = "Records employee arrival time")
     @PostMapping("/check-in/{employeeId}")
     public ResponseEntity<AttendanceResponse> checkIn(@PathVariable Long employeeId) {
         return ResponseEntity.ok(
                 AttendanceResponse.from(attendanceService.registerCheckIn(employeeId)));
     }
 
-    @Operation(summary = "Marcar salida del empleado")
+    @Operation(summary = "Register chek-out", description = "Records employee departure time")
     @PostMapping("/check-out/{employeeId}")
     public ResponseEntity<AttendanceResponse> checkOut(@PathVariable Long employeeId) {
         return ResponseEntity.ok(
                 AttendanceResponse.from(attendanceService.registerCheckOut(employeeId)));
     }
 
-    @Operation(summary = "Ver asistencia por rango de fechas")
+    @Operation(summary = "Get attendance by date range", description = "Filter attendance records between two dates")
     @GetMapping("/all")
-    @PreAuthorize("hasAnyRole('BOSS','STORE')")
+    @PreAuthorize("hasAnyRole('BOSS','EMPLOYEE')")
     public ResponseEntity<List<AttendanceResponse>> getAll(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
@@ -46,9 +46,9 @@ public class AttendanceController {
                 .map(AttendanceResponse::from).collect(Collectors.toList()));
     }
 
-    @Operation(summary = "Ver asistencia de un empleado")
+    @Operation(summary = "Get attendance by employee")
     @GetMapping("/employee/{employeeId}")
-    @PreAuthorize("hasAnyRole('BOSS','STORE')")
+    @PreAuthorize("hasAnyRole('BOSS','EMPLOYEE')")
     public ResponseEntity<List<AttendanceResponse>> getByEmployee(
             @PathVariable Long employeeId) {
         return ResponseEntity.ok(attendanceService.getByEmployeeId(employeeId).stream()

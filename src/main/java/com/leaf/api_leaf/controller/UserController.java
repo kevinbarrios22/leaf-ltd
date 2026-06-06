@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Tag(name = "Usuarios", description = "Gestión de usuarios del sistema")
+@Tag(name = "Users", description = "System user management")
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -20,7 +20,7 @@ public class UserController {
 
     private final UserRepository userRepository;
 
-    @Operation(summary = "Listar todos los usuarios — solo BOSS")
+    @Operation(summary = "List all users ", description = "Only BOSS can access this endpoint  ")
     @GetMapping
     @PreAuthorize("hasRole('BOSS')")
     public ResponseEntity<List<UserResponse>> getAll() {

@@ -1,8 +1,8 @@
 package com.leaf.api_leaf.service;
 
-import com.leaf.api_leaf.dto.AuthResponse;
-import com.leaf.api_leaf.dto.LoginRequest;
-import com.leaf.api_leaf.dto.RegisterRequest;
+import com.leaf.api_leaf.dto.response.AuthResponse;
+import com.leaf.api_leaf.dto.request.LoginRequest;
+import com.leaf.api_leaf.dto.request.RegisterRequest;
 import com.leaf.api_leaf.model.AppUser;
 import com.leaf.api_leaf.model.Role;
 import com.leaf.api_leaf.repository.RoleRepository;
