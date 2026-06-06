@@ -1,0 +1,52 @@
+# 🌿 Leaf Ltd — Business Management System
+
+REST API built with Spring Boot 3.3.4 + Java 21 for managing employee attendance, delivery sheets, and warehouse damaged products.
+
+## 📋 Modules
+- ✅ JWT Authentication with role-based access (BOSS, STORE, WAREHOUSE, EMPLOYEE)
+- ✅ Employee attendance control (check-in / check-out)
+- ✅ Delivery sheet management
+- ✅ Damaged products registry
+- ✅ Employee and user CRUD
+
+## 🛠️ Tech Stack
+- Java 21
+- Spring Boot 3.3.4
+- Spring Security + JWT (jjwt 0.11.5)
+- PostgreSQL
+- Spring Data JPA / Hibernate
+- Swagger / OpenAPI 2.6.0
+- Lombok
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Java 21
+- Maven 3.8+
+- PostgreSQL 14+
+
+### Installation
+
+1. Clone the repository
+```bash
+   git clone https://github.com/kevinbarrios22/leaf-ltd.git
+   cd leaf-ltd
+```
+
+2. Create the PostgreSQL database
+```sql
+   CREATE DATABASE leafltd;
+```
+
+3. Configure the application
+```bash
+   cp src/main/resources/application.yml.example src/main/resources/application.yml
+```
+   Edit `application.yml` with your database credentials and JWT secret.
+
+4. Run the application
+```bash
+   mvn spring-boot:run
+```
+
+5. Open Swagger UI
