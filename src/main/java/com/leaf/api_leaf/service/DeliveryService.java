@@ -6,6 +6,8 @@ import com.leaf.api_leaf.model.DeliveryInvoice;
 import com.leaf.api_leaf.model.DeliverySheet;
 import com.leaf.api_leaf.repository.DeliverySheetRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -38,11 +40,11 @@ public class DeliveryService {
         return deliverySheetRepository.save(sheet);
     }
 
-    public List<DeliverySheet> getAll(LocalDate date) {
+    public Page<DeliverySheet> getAll(LocalDate date, Pageable pageable) {
         if (date != null) {
-            return deliverySheetRepository.findByDeliveryDate(date);
+            return deliverySheetRepository.findByDeliveryDate(date, pageable);
         }
-        return deliverySheetRepository.findAll();
+        return deliverySheetRepository.findAll(pageable);
     }
 
     public DeliverySheet getById(Long id) {

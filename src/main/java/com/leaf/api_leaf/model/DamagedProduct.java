@@ -28,6 +28,9 @@ public class DamagedProduct {
 
     private String description;
 
+    @Column(name = "reviewed", nullable = false)
+    private boolean reviewed = false;
+
     @ManyToOne
     @JoinColumn(name = "reported_by")
     private AppUser reportedBy;

@@ -1,12 +1,17 @@
 package com.leaf.api_leaf.controller;
 
 import com.leaf.api_leaf.dto.DeliverySheetDTO;
+import com.leaf.api_leaf.dto.response.ApiResponse;
 import com.leaf.api_leaf.dto.response.DeliverySheetResponse;
 import com.leaf.api_leaf.service.DeliveryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,12 +39,15 @@ public class DeliveryController {
 
     @Operation(summary = "List delivery sheets ", description = "Optionally filter by date")
     @GetMapping
-    @PreAuthorize("hasAnyRole('BOSS','OFFICE','MANAGER','EMPLOYEE')")
-    public ResponseEntity<List<DeliverySheetResponse>> getAll(
+    @PreAuthorize("hasAnyRole('BOSS','MANAGER','OFFICE','EMPLOYEE')")
+    public ResponseEntity<ApiResponse<Page<DeliverySheetResponse>>> getAll(
             @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        return ResponseEntity.ok(deliveryService.getAll(date).stream()
-                .map(DeliverySheetResponse::from).collect(Collectors.toList()));
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @PageableDefault(size = 10, sort = "deliveryDate", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+        return ResponseEntity.ok(
+                ApiResponse.ok(deliveryService.getAll(date, pageable)
+                        .map(DeliverySheetResponse::from)));
     }
 
     @Operation(summary = "Get delivery sheet by ID")

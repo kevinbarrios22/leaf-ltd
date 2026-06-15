@@ -10,27 +10,20 @@ import java.time.LocalTime;
 @Getter
 @Setter
 public class AttendanceResponse {
-    private Long id;
+
     private Long employeeId;
     private String employeeName;
     private LocalDate date;
-    private LocalTime checkIn;
-    private LocalTime checkOut;
-    private LocalTime scheduledStart;
-    private LocalTime scheduledEnd;
+    private LocalTime entryTime;
+    private LocalTime exitTime;
     private String status;
-    private String notes;
 
     public static AttendanceResponse from(AttendanceRecord record) {
         AttendanceResponse dto = new AttendanceResponse();
-        dto.setId(record.getId());
         dto.setDate(record.getDate());
-        dto.setCheckIn(record.getCheckIn());
-        dto.setCheckOut(record.getCheckOut());
-        dto.setScheduledStart(record.getScheduledStart());
-        dto.setScheduledEnd(record.getScheduledEnd());
-        dto.setStatus(record.getStatus() != null ? record.getStatus().name() : null);
-        dto.setNotes(record.getNotes());
+        dto.setEntryTime(record.getEntryTime());
+        dto.setExitTime(record.getExitTime());
+        dto.setStatus(record.getStatus());
         if (record.getEmployee() != null) {
             dto.setEmployeeId(record.getEmployee().getId());
             dto.setEmployeeName(record.getEmployee().getFullName());

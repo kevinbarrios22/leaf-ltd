@@ -14,6 +14,7 @@ public class DamagedProductResponse {
     private String itemNumber;
     private Integer quantity;
     private String description;
+    private boolean reviewed;
     private String reportedBy;
 
     public static DamagedProductResponse from(DamagedProduct product) {
@@ -23,6 +24,7 @@ public class DamagedProductResponse {
         dto.setItemNumber(product.getItemNumber());
         dto.setQuantity(product.getQuantity());
         dto.setDescription(product.getDescription());
+        dto.setReviewed(product.isReviewed());
         if (product.getReportedBy() != null) {
             dto.setReportedBy(product.getReportedBy().getUsername());
         }

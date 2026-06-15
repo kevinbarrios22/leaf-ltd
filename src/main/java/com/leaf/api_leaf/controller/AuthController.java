@@ -32,4 +32,13 @@ public class AuthController {
     public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
+
+    @Operation(summary = "Refresh token", description = "Generates a new JWT token using the current valid one")
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(
+            @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        return ResponseEntity.ok(authService.refreshToken(token));
+    }
+
 }

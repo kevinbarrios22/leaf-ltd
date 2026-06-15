@@ -1,16 +1,16 @@
 package com.leaf.api_leaf.service;
 
-import com.leaf.api_leaf.enums.AttendanceStatus;
+import com.leaf.api_leaf.dto.request.BatchAttendanceRequest;
 import com.leaf.api_leaf.model.AttendanceRecord;
 import com.leaf.api_leaf.model.Employee;
 import com.leaf.api_leaf.repository.AttendanceRepository;
 import com.leaf.api_leaf.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -19,53 +19,79 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final EmployeeRepository employeeRepository;
 
-    public AttendanceRecord registerCheckIn(Long employeeId) {
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+    public int saveBatch(BatchAttendanceRequest request) {
+        int saved = 0;
+        for (BatchAttendanceRequest.RecordDTO recordDTO : request.getRecords()) {
+            Employee employee = employeeRepository.findById(recordDTO.getEmployeeId())
+                    .orElseThrow(() -> new RuntimeException("Employee not found: " + recordDTO.getEmployeeId()));
 
-        attendanceRepository.findByEmployeeIdAndDate(employee.getId(), LocalDate.now())
-                .ifPresent(r -> {
-                    throw new RuntimeException("Already registered today");
-                });
+            AttendanceRecord record = attendanceRepository
+                    .findByEmployeeIdAndDate(recordDTO.getEmployeeId(), request.getDate())
+                    .orElseGet(AttendanceRecord::new);
 
-        LocalTime now = LocalTime.now();
-        LocalTime scheduledStart = LocalTime.of(8, 0);
+            record.setEmployee(employee);
+            record.setDate(request.getDate());
+            record.setEntryTime(recordDTO.getEntryTime());
+            record.setExitTime(recordDTO.getExitTime());
+            record.setStatus(recordDTO.getStatus());
 
-        AttendanceStatus status = now.isAfter(scheduledStart.plusMinutes(10))
-                ? AttendanceStatus.LATE
-                : AttendanceStatus.ON_TIME;
-
-        AttendanceRecord record = new AttendanceRecord();
-        record.setEmployee(employee);
-        record.setDate(LocalDate.now());
-        record.setCheckIn(now);
-        record.setScheduledStart(scheduledStart);
-        record.setScheduledEnd(LocalTime.of(17, 0));
-        record.setStatus(status);
-
-        return attendanceRepository.save(record);
+            attendanceRepository.save(record);
+            saved++;
+        }
+        return saved;
     }
 
-    public AttendanceRecord registerCheckOut(Long employeeId) {
-        AttendanceRecord record = attendanceRepository
-                .findByEmployeeIdAndDate(employeeId, LocalDate.now())
-                .orElseThrow(() -> new RuntimeException("There is no check-in for today "));
+    public List<AttendanceRecord> getByDate(LocalDate date) {
+        return attendanceRepository.findByDate(date);
+    }
 
-        LocalTime now = LocalTime.now();
-        record.setCheckOut(now);
+    public Map<String, Object> getMonthlyReport(int year, int month) {
+        LocalDate from = LocalDate.of(year, month, 1);
+        LocalDate to = from.withDayOfMonth(from.lengthOfMonth());
 
-        if (record.getScheduledEnd() != null && now.isBefore(record.getScheduledEnd())) {
-            record.setStatus(AttendanceStatus.EARLY_LEAVE);
+        List<Employee> employees = employeeRepository.findByActiveTrue(Pageable.unpaged()).getContent();
+        List<AttendanceRecord> records = attendanceRepository.findByDateBetween(from, to);
+
+        Map<Long, Map<Integer, Map<String, Object>>> employeeRecords = new LinkedHashMap<>();
+
+        for (Employee emp : employees) {
+            Map<Integer, Map<String, Object>> days = new LinkedHashMap<>();
+            for (int day = 1; day <= from.lengthOfMonth(); day++) {
+                Map<String, Object> dayRecord = new HashMap<>();
+                dayRecord.put("status", "");
+                dayRecord.put("entryTime", null);
+                dayRecord.put("exitTime", null);
+                days.put(day, dayRecord);
+            }
+            employeeRecords.put(emp.getId(), days);
         }
 
-        return attendanceRepository.save(record);
-    }
+        for (AttendanceRecord rec : records) {
+            int day = rec.getDate().getDayOfMonth();
+            Map<String, Object> dayRecord = employeeRecords.get(rec.getEmployee().getId()).get(day);
+            dayRecord.put("status", rec.getStatus());
+            dayRecord.put("entryTime", rec.getEntryTime());
+            dayRecord.put("exitTime", rec.getExitTime());
+        }
 
-    public List<AttendanceRecord> getAllBetween(LocalDate from, LocalDate to) {
-        return attendanceRepository.findByDateBetween(from, to);
-    }
+        List<Integer> daysList = new ArrayList<>();
+        for (int day = 1; day <= from.lengthOfMonth(); day++) {
+            daysList.add(day);
+        }
 
-    public List<AttendanceRecord> getByEmployeeId(Long employeeId) {
-        return attendanceRepository.findByEmployeeId(employeeId);
+        List<Map<String, Object>> employeesList = new ArrayList<>();
+        for (Employee emp : employees) {
+            Map<String, Object> empMap = new LinkedHashMap<>();
+            empMap.put("employeeId", emp.getId());
+            empMap.put("name", emp.getFullName());
+            empMap.put("records", employeeRecords.get(emp.getId()));
+            employeesList.add(empMap);
+        }
+
+        Map<String, Object> report = new LinkedHashMap<>();
+        report.put("days", daysList);
+        report.put("employees", employeesList);
+
+        return report;
     }
 }

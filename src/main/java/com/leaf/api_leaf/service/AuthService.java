@@ -46,6 +46,27 @@ public class AuthService {
 
         return new AuthResponse(token, user.getUsername(), role);
     }
+    public AuthResponse refreshToken(String token) {
+        String username = jwtUtil.extractUsername(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        if (!jwtUtil.isTokenValid(token, userDetails)) {
+            throw new RuntimeException("Token is invalid or expired");
+        }
+
+        String newToken = jwtUtil.generateToken(userDetails);
+
+        AppUser user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        String role = user.getRoles().stream()
+                .findFirst()
+                .map(r -> r.getName().name())
+                .orElse("EMPLOYEE");
+
+        return new AuthResponse(newToken, user.getUsername(), role);
+    }
+
+
 
     public String register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -62,6 +83,6 @@ public class AuthService {
         user.getRoles().add(role);
 
         userRepository.save(user);
-        return "succesfully registered user";
+        return "Successfully registered user";
     }
 }

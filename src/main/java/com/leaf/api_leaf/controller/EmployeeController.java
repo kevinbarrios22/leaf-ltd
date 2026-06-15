@@ -1,18 +1,21 @@
 package com.leaf.api_leaf.controller;
 
 import com.leaf.api_leaf.dto.EmployeeDTO;
+import com.leaf.api_leaf.dto.response.ApiResponse;
 import com.leaf.api_leaf.dto.response.EmployeeResponse;
 import com.leaf.api_leaf.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "Employees", description = "Employees management")
 @RestController
@@ -29,13 +32,22 @@ public class EmployeeController {
         return ResponseEntity.ok(EmployeeResponse.from(employeeService.create(dto)));
     }
 
+
+
+
     @Operation(summary = "List all active employees")
     @GetMapping
-    @PreAuthorize("hasAnyRole('BOSS','OFFICE','MANAGER')")
-    public ResponseEntity<List<EmployeeResponse>> getAll() {
-        return ResponseEntity.ok(employeeService.getAll().stream()
-                .map(EmployeeResponse::from).collect(Collectors.toList()));
+    @PreAuthorize("hasAnyRole('BOSS','OFFICE')")
+    public ResponseEntity<ApiResponse<Page<EmployeeResponse>>> getAll(
+            @PageableDefault(size = 10, sort = "fullName", direction = Sort.Direction.ASC)
+            Pageable pageable) {
+        return ResponseEntity.ok(
+                ApiResponse.ok(employeeService.getAll(pageable)
+                        .map(EmployeeResponse::from)));
     }
+
+
+
 
     @Operation(summary = "Get employee by ID")
     @GetMapping("/{id}")

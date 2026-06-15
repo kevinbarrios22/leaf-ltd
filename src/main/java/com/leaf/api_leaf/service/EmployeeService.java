@@ -1,14 +1,14 @@
 package com.leaf.api_leaf.service;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import com.leaf.api_leaf.dto.EmployeeDTO;
 import com.leaf.api_leaf.model.AppUser;
 import com.leaf.api_leaf.model.Employee;
 import com.leaf.api_leaf.repository.EmployeeRepository;
 import com.leaf.api_leaf.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +29,6 @@ public class EmployeeService {
         employee.setPhone(dto.getPhone());
 
         if (dto.getAppUserId() != null) {
-            
             AppUser user = userRepository.findById(dto.getAppUserId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
             employee.setAppUser(user);
@@ -38,8 +37,8 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
-    public List<Employee> getAll() {
-        return employeeRepository.findByActiveTrue();
+    public Page<Employee> getAll(Pageable pageable) {
+        return employeeRepository.findByActiveTrue(pageable);
     }
 
     public Employee getById(Long id) {
@@ -65,7 +64,7 @@ public class EmployeeService {
 
     public void delete(Long id) {
         Employee employee = getById(id);
-        employee.setActive(false); // desactivar en lugar de borrar
+        employee.setActive(false);
         employeeRepository.save(employee);
     }
 }
