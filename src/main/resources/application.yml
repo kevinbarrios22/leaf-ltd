@@ -7,9 +7,6 @@ spring:
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: update
-    show-sql: false
     properties:
       hibernate:
         globally_quoted_identifiers: true
@@ -21,12 +18,14 @@ spring:
       name: ignored
 
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 jwt:
   secret: ${JWT_SECRET}
 
-# Swagger / OpenAPI
+cors:
+  allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
+
 springdoc:
   api-docs:
     path: /v3/api-docs
@@ -36,6 +35,3 @@ springdoc:
     operations-sorter: alpha
     display-request-duration: true
     try-it-out-enabled: true
-
-cors:
-  allowed-origins: http://localhost:5173

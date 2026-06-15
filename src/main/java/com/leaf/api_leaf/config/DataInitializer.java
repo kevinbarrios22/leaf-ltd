@@ -6,6 +6,8 @@ import com.leaf.api_leaf.model.Role;
 import com.leaf.api_leaf.repository.RoleRepository;
 import com.leaf.api_leaf.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
 
+    private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
+
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -21,7 +25,6 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        // Crear roles si no existen
         for (RoleName roleName : RoleName.values()) {
             if (roleRepository.findByName(roleName).isEmpty()) {
                 Role role = new Role();
@@ -30,18 +33,17 @@ public class DataInitializer implements CommandLineRunner {
             }
         }
 
-        // Crear usuario JEFE por defecto si no existe
         if (!userRepository.existsByUsername("admin")) {
-            Role jefeRole = roleRepository.findByName(RoleName.BOSS).orElseThrow();
+            Role bossRole = roleRepository.findByName(RoleName.BOSS).orElseThrow();
 
             AppUser admin = new AppUser();
             admin.setUsername("admin");
             admin.setPassword(passwordEncoder.encode("admin123"));
-            admin.setFullName("Administrador");
-            admin.getRoles().add(jefeRole);
+            admin.setFullName("Administrator");
+            admin.getRoles().add(bossRole);
 
             userRepository.save(admin);
-            System.out.println("✅ Usuario admin creado — user: admin / pass: admin123");
+            log.info("Admin user created — user: admin / pass: admin123");
         }
     }
 }

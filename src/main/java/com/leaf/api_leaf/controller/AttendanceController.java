@@ -1,9 +1,12 @@
 package com.leaf.api_leaf.controller;
 
+import com.leaf.api_leaf.dto.request.BatchAttendanceRequest;
+import com.leaf.api_leaf.dto.response.ApiResponse;
 import com.leaf.api_leaf.dto.response.AttendanceResponse;
 import com.leaf.api_leaf.service.AttendanceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Tag(name = "Attendance", description = "Employee attendance and schedule control")
@@ -22,36 +26,31 @@ public class AttendanceController {
 
     private final AttendanceService attendanceService;
 
-    @Operation(summary = "Register check-in", description = "Records employee arrival time")
-    @PostMapping("/check-in/{employeeId}")
-    public ResponseEntity<AttendanceResponse> checkIn(@PathVariable Long employeeId) {
-        return ResponseEntity.ok(
-                AttendanceResponse.from(attendanceService.registerCheckIn(employeeId)));
+    @Operation(summary = "Batch save attendance", description = "Save multiple attendance records for a date")
+    @PostMapping("/batch")
+    @PreAuthorize("hasAnyRole('BOSS','OFFICE','MANAGER','EMPLOYEE')")
+    public ResponseEntity<ApiResponse<Map<String, Integer>>> batchSave(
+            @Valid @RequestBody BatchAttendanceRequest request) {
+        int saved = attendanceService.saveBatch(request);
+        return ResponseEntity.ok(ApiResponse.ok(Map.of("saved", saved)));
     }
 
-    @Operation(summary = "Register check-out", description = "Records employee departure time")
-    @PostMapping("/check-out/{employeeId}")
-    public ResponseEntity<AttendanceResponse> checkOut(@PathVariable Long employeeId) {
-        return ResponseEntity.ok(
-                AttendanceResponse.from(attendanceService.registerCheckOut(employeeId)));
+    @Operation(summary = "Get attendance by date")
+    @GetMapping("/by-date")
+    @PreAuthorize("hasAnyRole('BOSS','OFFICE','MANAGER','EMPLOYEE')")
+    public ResponseEntity<ApiResponse<List<AttendanceResponse>>> getByDate(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        List<AttendanceResponse> records = attendanceService.getByDate(date).stream()
+                .map(AttendanceResponse::from)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(ApiResponse.ok(records));
     }
 
-    @Operation(summary = "Get attendance by date range", description = "Filter attendance records between two dates")
-    @GetMapping("/all")
+    @Operation(summary = "Get monthly attendance report", description = "Grid of employees x days")
+    @GetMapping("/report")
     @PreAuthorize("hasAnyRole('BOSS','OFFICE')")
-    public ResponseEntity<List<AttendanceResponse>> getAll(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-        return ResponseEntity.ok(attendanceService.getAllBetween(from, to).stream()
-                .map(AttendanceResponse::from).collect(Collectors.toList()));
-    }
-
-    @Operation(summary = "Get attendance by employee")
-    @GetMapping("/employee/{employeeId}")
-    @PreAuthorize("hasAnyRole('BOSS','OFFICE')")
-    public ResponseEntity<List<AttendanceResponse>> getByEmployee(
-            @PathVariable Long employeeId) {
-        return ResponseEntity.ok(attendanceService.getByEmployeeId(employeeId).stream()
-                .map(AttendanceResponse::from).collect(Collectors.toList()));
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getReport(
+            @RequestParam int year, @RequestParam int month) {
+        return ResponseEntity.ok(ApiResponse.ok(attendanceService.getMonthlyReport(year, month)));
     }
 }

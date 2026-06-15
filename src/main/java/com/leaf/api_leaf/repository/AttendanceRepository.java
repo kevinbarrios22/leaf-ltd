@@ -8,7 +8,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AttendanceRepository extends JpaRepository<AttendanceRecord, Long> {
-    List<AttendanceRecord> findByEmployeeId(Long employeeId);
-    List<AttendanceRecord> findByDateBetween(LocalDate from, LocalDate to);
+
     Optional<AttendanceRecord> findByEmployeeIdAndDate(Long employeeId, LocalDate date);
+
+    List<AttendanceRecord> findByDate(LocalDate date);
+
+    List<AttendanceRecord> findByEmployeeIdAndDateBetween(Long employeeId, LocalDate from, LocalDate to);
+
+    List<AttendanceRecord> findByDateBetween(LocalDate from, LocalDate to);
+
+    long countByDate(LocalDate date);
 }

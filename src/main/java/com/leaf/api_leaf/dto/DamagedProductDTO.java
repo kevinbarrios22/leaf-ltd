@@ -24,4 +24,6 @@ public class DamagedProductDTO {
 
     private String description;
 
+    private boolean reviewed;
+
 }

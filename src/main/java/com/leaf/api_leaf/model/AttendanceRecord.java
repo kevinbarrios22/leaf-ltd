@@ -1,6 +1,5 @@
 package com.leaf.api_leaf.model;
 
-import com.leaf.api_leaf.enums.AttendanceStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "attendance_records")
+@Table(name = "attendance_records", uniqueConstraints = @UniqueConstraint(columnNames = {"employee_id", "date"}))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,14 +25,9 @@ public class AttendanceRecord {
     @Column(nullable = false)
     private LocalDate date;
 
-    private LocalTime checkIn;
-    private LocalTime checkOut;
+    private LocalTime entryTime;
+    private LocalTime exitTime;
 
-    private LocalTime scheduledStart;
-    private LocalTime scheduledEnd;
-
-    @Enumerated(EnumType.STRING)
-    private AttendanceStatus status;
-
-    private String notes;
+    @Column(nullable = false)
+    private String status;
 }
